@@ -2,7 +2,7 @@ name: 'Register .comp file(s)'
 on:
   workflow_dispatch:
   push:
-    branchs:
+    branches:
       - main
 
   concurrency:
