@@ -8,9 +8,9 @@
 * Component: Frame_monitor
 *
 * %I
-* Written by:  KN, M. Hagen
-* Date: August 1998
-* Origin: Risoe
+* Written by:  GS Tucker
+* Date: 2023
+* Origin: European Spallation Source ERIC
 *
 * Rectangular Time-of-flight monitor that bins per source-frame.
 *
@@ -31,13 +31,7 @@
 * frequency: [Hz]       Source (modulus) frequency, overrides frame length
 * filename: [string]    Name of file in which to store the detector image
 * restore_neutron: [1]  If set, the monitor does not influence the neutron state
-* nowritefile: [1]      If set, monitor will skip writing to disk
-*
-* OUTPUT PARAMETERS:
-*
-* TOF_N: []             Array of neutron counts
-* TOF_p: []             Array of neutron weight counts
-* TOF_p2: []            Array of second moments
+* writefile: [1]        If set to 0, monitor will skip writing to disk, default = 1
 *
 * %E
 *******************************************************************************/
@@ -48,7 +42,7 @@ DEFINITION PARAMETERS ()
 
 SETTING PARAMETERS (frame=0, frequency=0, dt=0, int nt=20, 
                     string filename=0, xmin=-0.05, xmax=0.05, ymin=-0.05, ymax=0.05,
-		    xwidth=0, yheight=0, restore_neutron=0, int nowritefile=0)
+		    xwidth=0, yheight=0, restore_neutron=0, int writefile=1)
 
 OUTPUT PARAMETERS ()
 /* Neutron parameters: (x,y,z,vx,vy,vz,t,sx,sy,sz,p) */
@@ -93,7 +87,7 @@ INITIALIZE
   }
 
   // Use instance name for monitor output if no input was given
-  if (!strcmp(filename,"\0")) sprintf(filename, NAME_CURRENT_COMP);
+  if (!strcmp(filename, "\0")) sprintf(filename, "%s", NAME_CURRENT_COMP);
 %}
 
 TRACE
@@ -119,7 +113,7 @@ TRACE
 
 SAVE
 %{
-  if(!nowritefile) {
+  if(writefile != 0) {
   DETECTOR_OUT_1D(
       "Frame monitor",
       "Time-of-flight [\\gms]",
